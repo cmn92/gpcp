@@ -1,0 +1,26 @@
+{
+    "id": "0D97BC30",
+    "path": "~/gpcp/NAMESPACE",
+    "project_path": "NAMESPACE",
+    "type": "r_namespace",
+    "hash": "663712550",
+    "contents": "",
+    "dirty": false,
+    "created": 1726181507089.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "4,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1726182246,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1726182246,
+    "read_only": true,
+    "read_only_alternatives": []
+}

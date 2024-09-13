@@ -1,0 +1,5 @@
+exportPattern("^[[:alpha:]]+")
+importFrom(stats, as.formula, filter, na.omit, sd)
+importFrom(utils, combn, head, install.packages, read.delim)
+importFrom(methods, as)
+

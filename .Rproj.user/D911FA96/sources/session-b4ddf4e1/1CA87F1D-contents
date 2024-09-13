@@ -1,0 +1,192 @@
+################################################################################
+# Genomic prediction of cross performance for YamBase
+################################################################################
+
+#Authors: Marlee Labroo, Christine Nyaga, Lukas Mueller
+
+# There are ten main steps to this protocol:
+# 1. Load the software needed.
+# 2. Declare user-supplied variables.
+# 3. Read in the genotype data and convert to numeric allele counts.
+# 4. Get the genetic predictors needed.
+# 5. Process the phenotypic data.
+# 6. Fit the mixed models in sommer.
+# 7. Backsolve from individual estimates to marker effect estimates / GBLUP -> RR-BLUP
+# 8. Weight the marker effects and add them together to form an index of merit.
+# 9. Predict the crosses.
+# 10. Format the information needed for output.
+
+#' @export
+#' @importFrom tools file_ext
+#' @importFrom magrittr %>%
+#' @importFrom VariantAnnotation readVcf
+#' @importFrom VariantAnnotation genotypeToSnpMatrix
+#' @importFrom methods as
+#' @importFrom stats as.formula filter na.omit sd
+#' @importFrom utils combn head read.delim
+runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
+                   weights = NA, userSexes = "", userFixed = NA, userRandom = NA, Ploidy = NA, NCrosses = NA) {
+
+  ################################################################################
+  # 1. Load software needed
+  ################################################################################
+
+  # Load QuantGenResources C++ code
+  Rcpp::sourceCpp("~/gpcp/R/QuantGenResources/CalcCrossMeans.cpp")
+
+  ################################################################################
+  # 2. Declare user-supplied variables
+  ################################################################################
+
+  # a. Define path with internal YamBase instructions for genotype file
+  userGeno <- genotypeFile
+
+  # b. Define phenotype file
+  userPheno <- phenotypeFile
+
+  # c. Handle fixed effects
+  userFixed <- unlist(strsplit(userFixed, split = ",", fixed = TRUE))
+
+  # d. Handle random effects
+  if (!is.na(userRandom)) {
+    userRandom <- unlist(strsplit(userRandom, split = ",", fixed = TRUE))
+  }
+
+  # e. Identify genotype column
+  userID <- genotypes
+
+  # f. Define organism ploidy
+  userPloidy <- ifelse(is.na(Ploidy), 2, Ploidy)
+
+  # g. Identify response variables
+  userResponse <- unlist(strsplit(traits, split = ",", fixed = TRUE))
+
+  # h. Handle weights for responses
+  userWeights <- weights
+
+  # i. Handle number of crosses to output
+  userNCrosses <- NCrosses
+
+  ################################################################################
+  # 3. Read in the genotype data and convert to numeric allele counts.
+  ################################################################################
+
+  if (tools::file_ext(genotypeFile) == "vcf") {
+    print("READING VARIANT FILE")
+    myVCF <- VariantAnnotation::readVcf(genotypeFile)
+    mat <- VariantAnnotation::genotypeToSnpMatrix(myVCF)
+    G <- methods::as(mat$genotypes, "numeric")
+    G <- G[, colSums(is.na(G)) < nrow(G)]
+  } else {
+    print("READING DOSAGE FILE")
+    GF <- utils::read.delim(genotypeFile)
+    GD <- GF[, -1]
+    G <- t(as.matrix(GD))
+  }
+
+  # print("G Matrix start --------")
+  # print(G[1:5, 1:5])
+  # print("G Matrix end =========")
+
+  ################################################################################
+  # 4. Get the genetic predictors needed.
+  ################################################################################
+
+  # Additive relationship matrix (VanRaden method)
+  allele_freq <- colSums(G) / (userPloidy * nrow(G))
+  W <- t(G) - userPloidy * allele_freq
+  WWt <- crossprod(W)
+  denom <- sum(userPloidy * allele_freq * (1 - allele_freq))
+  A <- WWt / denom
+
+  # Dominance or digenic dominance
+  if (userPloidy == 2) {
+    D <- AGHmatrix::Gmatrix(G, method = "Su", ploidy = userPloidy, missingValue = NA)
+  }
+
+  # (additional genetic predictors as needed)
+
+  ################################################################################
+  # 5. Process the phenotypic data.
+  ################################################################################
+
+  # Scale the response variables
+  for (i in seq_along(userResponse)) {
+    userPheno[, userResponse[i]] <- scale(userPheno[, userResponse[i]], center = TRUE, scale = TRUE)
+  }
+
+  dominanceEffectCol <- paste(userID, "2", sep = "")
+  userPheno[, dominanceEffectCol] <- userPheno[, userID]
+  print(colnames(userPheno))
+  uniq <- length(sapply(lapply(userPheno, unique), length))
+  ################################################################################
+  # 6. Fit the mixed models in sommer.
+  ################################################################################
+
+  print("Fitting mixed model in sommer")
+  userModels <- list()
+
+  for (i in 1:length(userResponse)) {
+    # check if fixed effects besides f are requested, then paste together
+    # response variable and fixed effects
+    if (!is.na(userFixed[1])) {
+      fixedEff <- paste(userFixed, collapse = " + ")
+      fixedEff <- paste(fixedEff, "f", sep = " + ")
+      fixedArg <- paste(userResponse[i], " ~ ", fixedEff, sep = "")
+    }
+    if (is.na(userFixed[1])) {
+      fixedArg <- paste(userResponse[i], " ~ ", "f")
+    }
+
+
+    # check if random effects besides genotypic additive and dominance effects
+    # are requested, then paste together the formula
+
+
+    if (!is.na(userRandom[1])) {
+      randEff <- paste(userRandom, collapse = " + ")
+      ID2 <- paste(userID, 2, sep = "")
+      randEff2 <- paste("~vsr(", userID, ", Gu = A) + vsr(", ID2, ", Gu = D)", sep = "")
+      randArg <- paste(randEff2, randEff, sep = " + ")
+    }
+    if (is.na(userRandom[1])) {
+      ID2 <- paste(userID, 2, sep = "")
+      randArg <- paste("~vsr(", userID, ", Gu = A) + vsr(", ID2, ", Gu = D)", sep = "")
+    }
+
+
+    #  write(paste("USER PHENO:", userPheno), stderr())
+    #  write(paste("COLNAMES: ", colnames(userPheno)), stderr())
+    # fit the mixed GBLUP model
+    myMod <- sommer::mmer(
+      fixed = as.formula(fixedArg),
+      random = as.formula(randArg),
+      rcov = ~units,
+      getPEV = FALSE,
+      data = userPheno
+    )
+    # save the fit model
+
+    userModels[[i]] <- myMod
+  }
+
+
+  ################################################################################
+  # 9. Predict the crosses.
+  ################################################################################
+
+  crossPlan <- calcCrossMean(G[rownames(G) %in% userPheno[, userID], ], userAddEff, userDomEff, userPloidy)
+
+  ################################################################################
+  # 10. Format the output.
+  ################################################################################
+
+  if (userSexes != "") {
+    # Filter based on sexes if provided
+    crossPlan$P1Sex <- userPheno[match(crossPlan$Parent1, userPheno$germplasmName), userSexes]
+    crossPlan$P2Sex <- userPheno[match(crossPlan$Parent2, userPheno$germplasmName), userSexes]
+    crossPlan <- dplyr::filter(crossPlan, P1Sex != P2Sex)
+  }
+
+  return(crossPlan)
+}
