@@ -27,7 +27,7 @@
 runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
                    weights = NA, userSexes = "", userFixed = NA, userRandom = NA, Ploidy = NA, NCrosses = NA) {
 
-  Rcpp::sourceCpp("~/Documents/GCPC_input_files/QuantGenResources/CalcCrossMeans.cpp") # this is called CalcCrossMean.cpp on Github
+  Rcpp::sourceCpp("~/gpcp/R/QuantGenResources/CalcCrossMeans.cpp") # this is called CalcCrossMean.cpp on Github
 
   if (!requireNamespace("snpStats", quietly = TRUE)) {
     stop("The 'snpStats' package is required but not installed. Please install it using BiocManager::install('snpStats').")
