@@ -329,6 +329,7 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
       fixed = stats::as.formula(fixedArg),
       random = stats::as.formula(randArg),
       rcov = ~units,
+      nIters = 3,
       getPEV = FALSE,
       data = userPheno
     )
