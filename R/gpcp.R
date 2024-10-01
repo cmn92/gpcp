@@ -353,11 +353,29 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
 
 
   A.T <- A.G %*% t(A.G) ## additive genotype matrix
-  A.Tinv <- solve(A.T) # inverse; may cause an error sometimes, if so, add a small amount to the diag
+  # inverse; may cause an error sometimes, if so, add a small amount to the diag
+  epsilon <- 1e-8  # A small value to add to the diagonal
+  # Try to invert the matrix
+  A.Tinv <- tryCatch({
+    solve(A.T)  # Try solving normally
+  }, error = function(e) {
+    # If there is an error (like singular matrix), add epsilon to diagonal and retry
+    warning("Matrix is singular; adding small value to diagonal and retrying inversion.")
+    A.T.reg <- A.T + diag(epsilon, nrow(A.T))
+    solve(A.T.reg)  # Solve the regularized matrix
+  })                                    
   A.TTinv <- t(A.G) %*% A.Tinv # M'%*% (M'M)-
 
   D.T <- D.G %*% t(D.G) ## dominance genotype matrix
-  D.Tinv <- solve(D.T) ## inverse
+  ## inverse
+  D.Tinv <- tryCatch({
+    solve(D.T)  # Try solving normally
+  }, error = function(e) {
+    # If there is an error (like singular matrix), add epsilon to diagonal and retry
+    warning("Matrix is singular; adding small value to diagonal and retrying inversion.")
+    D.T.reg <- D.T + diag(epsilon, nrow(D.T))
+    solve(D.T.reg)  # Solve the regularized matrix
+  })                                        
   D.TTinv <- t(D.G) %*% D.Tinv # M'%*% (M'M)-
 
 
