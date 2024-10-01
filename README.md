@@ -25,15 +25,15 @@ Here is an example of how to use the runGPCP function for genomic prediction of 
 
   ```r
   # Load phenotype data from a CSV file
-phenotypeFile <- read.csv("~/Documents/GCPC_input_files/2020_TDr_PHENO (1).csv")
+phenotypeFile <- read.csv("~/gpcp/2020_TDr_PHENO (1).csv")
 
 # Specify the genotype file path (VCF or HapMap format)
-genotypeFile <- "~/Documents/GCPC_input_files/genotypeFile.vcf"
+genotypeFile <- "~/gpcp/genotypeFile.vcf"
 
 # Define necessary inputs
 genotypes <- "Accession"  # Column name for genotype IDs in phenotype data
-traits <- c("rAUDPC_YMV", "YIELD", "DMC")  # List of traits to predict
-weights <- c(0.2, 3, 1)  # Weights corresponding to traits
+traits <- c("YIELD", "DMC")  # List of traits to predict
+weights <- c(3, 1)  # Weights corresponding to traits
 userFixed <- c("LOC", "REP")  # Fixed effects variables
 Ploidy <- 2  # Ploidy level of the organism
 NCrosses <- 150  # Number of top crosses to output
