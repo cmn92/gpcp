@@ -25,7 +25,7 @@ Here is an example of how to use the runGPCP function for genomic prediction of 
 
   ```r
   # Load phenotype data from a CSV file
-phenotypeFile <- read.csv("~/gpcp/2020_TDr_PHENO (1).csv")
+phenotypeFile <- read.csv("~/gpcp/phenotypeFile.csv")
 
 # Specify the genotype file path (VCF or HapMap format)
 genotypeFile <- "~/gpcp/genotypeFile_Chr9and11.vcf"
