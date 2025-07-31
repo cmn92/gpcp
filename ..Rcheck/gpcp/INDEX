@@ -1,0 +1,4 @@
+phenotypeFile           Example Phenotype Data
+runGPCP                 Genomic Prediction of Cross Performance This
+                        function performs genomic prediction of cross
+                        performance using genotype and phenotype data.

@@ -1,0 +1,193 @@
+\nonstopmode{}
+\documentclass[letterpaper]{book}
+\usepackage[times,inconsolata,hyper]{Rd}
+\usepackage{makeidx}
+\makeatletter\@ifl@t@r\fmtversion{2018/04/01}{}{\usepackage[utf8]{inputenc}}\makeatother
+% \usepackage{graphicx} % @USE GRAPHICX@
+\makeindex{}
+\begin{document}
+\chapter*{}
+\begin{center}
+{\textbf{\huge Package `gpcp'}}
+\par\bigskip{\large \today}
+\end{center}
+\ifthenelse{\boolean{Rd@use@hyper}}{\hypersetup{pdftitle = {gpcp: Genomic Prediction of Cross Performance}}}{}
+\ifthenelse{\boolean{Rd@use@hyper}}{\hypersetup{pdfauthor = {Marlee Labroo; Christine Nyaga; Lukas Mueller}}}{}
+\begin{description}
+\raggedright{}
+\item[Type]\AsIs{Package}
+\item[Title]\AsIs{Genomic Prediction of Cross Performance}
+\item[Version]\AsIs{0.1.1}
+\item[Author]\AsIs{Marlee Labroo [aut], Christine Nyaga [cre, aut], Lukas Mueller [aut]}
+\item[Maintainer]\AsIs{Christine Nyaga }\email{cmn92@cornell.edu}\AsIs{}
+\item[Description]\AsIs{This function performs genomic prediction of cross performance…}
+\item[License]\AsIs{GPL (>= 3)}
+\item[Encoding]\AsIs{UTF-8}
+\item[LazyData]\AsIs{true}
+\item[LinkingTo]\AsIs{Rcpp, RcppArmadillo}
+\item[Imports]\AsIs{Rcpp, dplyr, sommer (>= 4.0.2), AGHmatrix, Matrix,
+VariantAnnotation, tools, magrittr, methods}
+\item[Suggests]\AsIs{knitr, rmarkdown, testthat (>= 3.0.0), snpStats, BiocManager}
+\item[RoxygenNote]\AsIs{7.3.2}
+\item[VignetteBuilder]\AsIs{knitr}
+\item[Depends]\AsIs{R (>= 2.10)}
+\item[Config/testthat/edition]\AsIs{3}
+\end{description}
+\Rdcontents{Contents}
+\HeaderA{phenotypeFile}{Example Phenotype Data}{phenotypeFile}
+\keyword{datasets}{phenotypeFile}
+%
+\begin{Description}
+This is a sample phenotype dataset used for genomic prediction.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+phenotypeFile
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A data frame with 24 columns:
+\begin{description}
+
+\item[ATW] Description of ATW
+\item[AUDPC\_YAD] Area Under Disease Progress Curve for YAD
+\item[AUDPC\_YMV] Area Under Disease Progress Curve for YMV
+\item[Accession] Genotype IDs for each individual
+\item[Block] Block information
+\item[DMC] Dry Matter Content values
+\item[Design] Experimental design
+\item[LOC] Location of the trials
+\item[NPH] Number of Plants Harvested
+\item[OXBI] Oxidation Index
+\item[Oxint180Minutes] Oxidation intensity after 180 minutes
+\item[PLOT] Plot number
+\item[REP] Replication number
+\item[Settweight] Weight of the planting setts
+\item[TTNPL] Total Tuber Number per Plant
+\item[TTWPL] Total Tuber Weight per Plant
+\item[Trial] Trial name or ID
+\item[Vigor] Plant vigor score
+\item[YIELD] Yield values
+\item[Year] Year of the experiment
+\item[Yield.per.plot..kg.] Yield per plot in kilograms
+\item[Yield\_udj] Unadjusted Yield
+\item[rAUDPC\_YAD] Relative AUDPC for YAD
+\item[rAUDPC\_YMV] Relative AUDPC for YMV
+
+\end{description}
+
+\end{Format}
+%
+\begin{Source}
+Generated for the gpcp package example
+\end{Source}
+%
+\begin{Examples}
+\begin{ExampleCode}
+data(phenotypeFile)
+head(phenotypeFile)
+\end{ExampleCode}
+\end{Examples}
+\HeaderA{runGPCP}{Genomic Prediction of Cross Performance This function performs genomic prediction of cross performance using genotype and phenotype data.}{runGPCP}
+%
+\begin{Description}
+Genomic Prediction of Cross Performance
+This function performs genomic prediction of cross performance using genotype and phenotype data.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+runGPCP(
+  phenotypeFile,
+  genotypeFile = NA,
+  genotypeData = NA,
+  genotypes,
+  traits,
+  weights = NA,
+  userSexes = "",
+  userFixed = NA,
+  userRandom = NA,
+  Ploidy = NA,
+  NCrosses = NA
+)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{phenotypeFile}] A data frame containing phenotypic data, typically read from a CSV file.
+
+\item[\code{genotypeFile}] Path to the genotypic data, either in VCF or HapMap format.
+
+\item[\code{genotypeData}] A dataframe containing genotypic data if genotypeFile not provided
+
+\item[\code{genotypes}] A character string representing the column name in the phenotype file for the genotype IDs.
+
+\item[\code{traits}] A string of comma-separated trait names from the phenotype file.
+
+\item[\code{weights}] A numeric vector specifying weights for the traits.
+
+\item[\code{userSexes}] A string representing the column name corresponding to the individuals' sexes.
+
+\item[\code{userFixed}] A string of comma-separated fixed effect variables.
+
+\item[\code{userRandom}] A string of comma-separated random effect variables.
+
+\item[\code{Ploidy}] An integer representing the ploidy level of the organism.
+
+\item[\code{NCrosses}] An integer specifying the number of top crosses to output.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+A data frame containing predicted cross performance.
+\end{Value}
+%
+\begin{Examples}
+\begin{ExampleCode}
+# Load phenotype data from CSV
+# Diploid pipeline
+phenotypeFile <- read.csv(system.file("extdata", "phenotypeFile.csv", package = "gpcp"))
+genotypeFile <- system.file("extdata", "genotypeFile_Chr9and11.vcf", package = "gpcp")
+finalcrosses <- runGPCP(
+    phenotypeFile = phenotypeFile,
+    genotypeFile = genotypeFile,
+    genotypes = "Accession",
+    traits = "YIELD,DMC",
+    weights = c(3, 1),
+    userFixed = "LOC,REP",
+    Ploidy = 2,
+    NCrosses = 150
+)
+message(finalcrosses)
+ #PolyPLoid Pipeline
+ # 1) load example data from the package
+data(DT_polyploid, package = "sommer")
+DT <- DT_polyploid
+GT <- GT_polyploid
+MP <- MP_polyploid
+# 2) convert A/T/C/G strings to numeric codes
+numo <- sommer::atcg1234(data = GT, ploidy = 4)
+
+# 3) find the set of individuals common to genotypes and phenotypes
+common <- intersect(DT$Name, rownames(numo$M))
+marks  <- numo$M[common, , drop = FALSE]
+pheno2 <- as.data.frame(DT[match(common, DT$Name), ])
+# 4) call runGPCP with ploidy = 4
+result4x <- suppressWarnings(
+  runGPCP(
+    phenotypeFile = pheno2,
+    genotypeData   = marks,
+    genotypes      = "Name",
+    traits         = c("total_yield", "tuber_length"),
+    weights        = c(3, 1),
+    Ploidy         = 4,
+    NCrosses       = 100
+  )
+)
+\end{ExampleCode}
+\end{Examples}
+\printindex{}
+\end{document}

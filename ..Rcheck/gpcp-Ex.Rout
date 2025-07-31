@@ -1,0 +1,154 @@
+
+R version 4.5.1 (2025-06-13) -- "Great Square Root"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "gpcp"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> base::assign(".ExTimings", "gpcp-Ex.timings", pos = 'CheckExEnv')
+> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+> base::assign(".format_ptime",
++ function(x) {
++   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
++   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
++   options(OutDec = '.')
++   format(x[1L:3L], digits = 7L)
++ },
++ pos = 'CheckExEnv')
+> 
+> ### * </HEADER>
+> library('gpcp')
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("phenotypeFile")
+> ### * phenotypeFile
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: phenotypeFile
+> ### Title: Example Phenotype Data
+> ### Aliases: phenotypeFile
+> ### Keywords: datasets
+> 
+> ### ** Examples
+> 
+> data(phenotypeFile)
+> head(phenotypeFile)
+  PLOT    Accession    LOC Year REP Block             Design Trial Settweight
+1 1123   TDr1719027 Ikenne 2020   1     1 Partial replicated   TFE         NA
+2 1195   TDr1716015 Ibadan 2020   1     1 Partial replicated   TFE         NA
+3   83   TDr8902665 Ibadan 2020   1    17          Augmented   APT      0.740
+4  609   TDr1756018  Abuja 2020   1     4          Augmented   SCG      0.450
+5  720 TDrMeccakusa  Abuja 2020   1     6          Augmented   SCG      0.266
+6  735   TDr1756004  Abuja 2020   1     6          Augmented   SCG      0.346
+  NPH Vigor AUDPC_YMV rAUDPC_YMV AUDPC_YAD rAUDPC_YAD Yield.per.plot..kg.
+1   5     2    180.00 0.01500000     150.0 0.01250000                1.05
+2  NA     2    150.00 0.01250000        NA         NA                  NA
+3   4     3    313.75 0.02614583     197.5 0.01645833                5.89
+4   3     2    190.00 0.02111111     105.0 0.01166667                3.80
+5   1     3    270.00 0.03000000     150.0 0.01666667                1.20
+6   3     3    205.00 0.02277778     135.0 0.01500000                3.50
+     TTNPL    TTWPL Yield_udj YIELD  ATW   DMC Oxint180Minutes  OXBI
+1 1.000000 0.210000      2.10  2.10 0.21    NA              NA    NA
+2       NA       NA        NA    NA   NA    NA              NA    NA
+3 1.000000 1.500000     11.78 11.78 1.47 30.67               0 -0.23
+4 2.333333 1.266667     12.67 12.67 0.54    NA              NA    NA
+5 1.000000 1.200000     12.00 12.00 1.20    NA              NA    NA
+6 1.333333 1.166667     11.67 11.67 0.88    NA              NA    NA
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("phenotypeFile", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("runGPCP")
+> ### * runGPCP
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: runGPCP
+> ### Title: Genomic Prediction of Cross Performance This function performs
+> ###   genomic prediction of cross performance using genotype and phenotype
+> ###   data.
+> ### Aliases: runGPCP
+> 
+> ### ** Examples
+> 
+> # Load phenotype data from CSV
+> # Diploid pipeline
+> phenotypeFile <- read.csv(system.file("extdata", "phenotypeFile.csv", package = "gpcp"))
+> genotypeFile <- system.file("extdata", "genotypeFile_Chr9and11.vcf", package = "gpcp")
+> finalcrosses <- runGPCP(
++     phenotypeFile = phenotypeFile,
++     genotypeFile = genotypeFile,
++     genotypes = "Accession",
++     traits = "YIELD,DMC",
++     weights = c(3, 1),
++     userFixed = "LOC,REP",
++     Ploidy = 2,
++     NCrosses = 150
++ )
+READING VARIANT FILE 
+GENETIC PREDICTIONS...
+DISTANCE MATRIX...
+Initial data: 
+	Number of Individuals: 799 
+	Number of Markers: 331 
+
+Missing data check: 
+	Total SNPs: 331 
+	 0 SNPs dropped due to missing data threshold of 0.5 
+	Total of: 331  SNPs 
+
+MAF check: 
+	No SNPs with MAF below 0 
+
+Heterozigosity data check: 
+	No SNPs with heterozygosity, missing threshold of =  0 
+
+Summary check: 
+	Initial:  331 SNPs 
+	Final:  331  SNPs ( 0  SNPs removed) 
+ 
+Completed! Time = 0.114  seconds 
+processing phenotypic data...
+Fitting mixed model in sommer
+User response:  YIELD
+Generating formula...
+Fit mixed GBLUP model... ~sommer::vsm(sommer::ism(Accession), Gu = A) + sommer::vsm(sommer::ism(Accession2), Gu = D)
+Adding additional levels of Gu in the model matrix of 'Accession' 
+Adding additional levels of Gu in the model matrix of 'Accession2' 
+User response:  DMC
+Generating formula...
+Fit mixed GBLUP model... ~sommer::vsm(sommer::ism(Accession), Gu = A) + sommer::vsm(sommer::ism(Accession2), Gu = D)
+Adding additional levels of Gu in the model matrix of 'Accession' 
+Adding additional levels of Gu in the model matrix of 'Accession2' 
+Warning in value[[3L]](cond) :
+  Matrix is singular; adding small value to diagonal and retrying inversion.
+Warning in value[[3L]](cond) :
+  Matrix is singular; adding small value to diagonal and retrying inversion.
+Predict crosses...
+GP:
+Error in calcCrossMean(GP, ai, di, userPloidy) : 
+  object '_gpcp_calcCrossMean' not found
+Calls: runGPCP -> calcCrossMean
+Execution halted

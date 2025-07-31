@@ -1,0 +1,208 @@
+* using log directory ‘/home/cmn92/gpcp/..Rcheck’
+* using R version 4.5.1 (2025-06-13)
+* using platform: x86_64-pc-linux-gnu
+* R was compiled by
+    gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+    GNU Fortran (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+* running under: Pop!_OS 22.04 LTS
+* using session charset: UTF-8
+* using option ‘--as-cran’
+* checking for file ‘./DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘gpcp’ version ‘0.1.1’
+* package encoding: UTF-8
+* checking CRAN incoming feasibility ... [4s/13s] NOTE
+Maintainer: ‘Christine Nyaga <cmn92@cornell.edu>’
+
+Package has a VignetteBuilder field but no prebuilt vignette index.
+
+The build time stamp is missing.
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... WARNING
+Subdirectory ‘gpcp/src’ contains apparent object files/libraries
+  CalcCrossMeans.o gpcp.so
+Object files/libraries should not be included in a source package.
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... NOTE
+Found the following hidden files and directories:
+  .gitignore
+  ..Rcheck
+  .git
+These were most likely included in error. See section ‘Package
+structure’ in the ‘Writing R Extensions’ manual.
+
+CRAN-pack does not know about
+  ..Rcheck
+  .git
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking serialization versions ... OK
+* checking whether package ‘gpcp’ can be installed ... [26s/18s] OK
+* used C++ compiler: ‘g++ (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0’
+* checking installed package size ... OK
+* checking package directory ... OK
+* checking for future file timestamps ... OK
+* checking DESCRIPTION meta-information ... NOTE
+Malformed Description field: should contain one or more complete sentences.
+Checking should be performed on sources prepared by ‘R CMD build’.
+* checking top-level files ... NOTE
+File
+  LICENSE
+is not mentioned in the DESCRIPTION file.
+Non-standard files/directories found at top level:
+  ‘LICENSE.md’ ‘Meta’ ‘doc’ ‘gpcp.Rproj’
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... WARNING
+Found the following directory with the name of a check directory:
+  ./..Rcheck
+Most likely, these were included erroneously.
+Found the following directory with the name of a version control directory:
+  ./.git
+These should not be in a package tarball.
+* checking code files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking loading without being on the library search path ... OK
+* checking use of S3 registration ... OK
+* checking dependencies in R code ... OK
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... [39s/25s] NOTE
+calcCrossMean: no visible binding for global variable
+  ‘_gpcp_calcCrossMean’
+Undefined global functions or variables:
+  _gpcp_calcCrossMean
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd line widths ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking contents of ‘data’ directory ... OK
+* checking data for non-ASCII characters ... OK
+* checking LazyData ... OK
+* checking data for ASCII and uncompressed saves ... OK
+* checking line endings in C/C++/Fortran sources/headers ... OK
+* checking line endings in Makefiles ... OK
+* checking compilation flags in Makevars ... OK
+* checking for GNU extensions in Makefiles ... OK
+* checking for portable use of $(BLAS_LIBS) and $(LAPACK_LIBS) ... OK
+* checking use of PKG_*FLAGS in Makefiles ... OK
+* checking use of SHLIB_OPENMP_*FLAGS in Makefiles ... OK
+* checking pragmas in C/C++ headers and code ... OK
+* checking compilation flags used ... OK
+* checking compiled code ... NOTE
+File ‘gpcp/libs/gpcp.so’:
+  Found no calls to: ‘R_registerRoutines’, ‘R_useDynamicSymbols’
+
+It is good practice to register native routines and to disable symbol
+search.
+
+See ‘Writing portable packages’ in the ‘Writing R Extensions’ manual.
+* checking files in ‘vignettes’ ... WARNING
+Files in the 'vignettes' directory but no files in 'inst/doc':
+  ‘gpcp-introduction.Rmd’
+* checking examples ... [22s/11s] ERROR
+Running examples in ‘gpcp-Ex.R’ failed
+The error most likely occurred in:
+
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: runGPCP
+> ### Title: Genomic Prediction of Cross Performance This function performs
+> ###   genomic prediction of cross performance using genotype and phenotype
+> ###   data.
+> ### Aliases: runGPCP
+> 
+> ### ** Examples
+> 
+> # Load phenotype data from CSV
+> # Diploid pipeline
+> phenotypeFile <- read.csv(system.file("extdata", "phenotypeFile.csv", package = "gpcp"))
+> genotypeFile <- system.file("extdata", "genotypeFile_Chr9and11.vcf", package = "gpcp")
+> finalcrosses <- runGPCP(
++     phenotypeFile = phenotypeFile,
++     genotypeFile = genotypeFile,
++     genotypes = "Accession",
++     traits = "YIELD,DMC",
++     weights = c(3, 1),
++     userFixed = "LOC,REP",
++     Ploidy = 2,
++     NCrosses = 150
++ )
+READING VARIANT FILE 
+GENETIC PREDICTIONS...
+DISTANCE MATRIX...
+Initial data: 
+	Number of Individuals: 799 
+	Number of Markers: 331 
+
+Missing data check: 
+	Total SNPs: 331 
+	 0 SNPs dropped due to missing data threshold of 0.5 
+	Total of: 331  SNPs 
+
+MAF check: 
+	No SNPs with MAF below 0 
+
+Heterozigosity data check: 
+	No SNPs with heterozygosity, missing threshold of =  0 
+
+Summary check: 
+	Initial:  331 SNPs 
+	Final:  331  SNPs ( 0  SNPs removed) 
+ 
+Completed! Time = 0.114  seconds 
+processing phenotypic data...
+Fitting mixed model in sommer
+User response:  YIELD
+Generating formula...
+Fit mixed GBLUP model... ~sommer::vsm(sommer::ism(Accession), Gu = A) + sommer::vsm(sommer::ism(Accession2), Gu = D)
+Adding additional levels of Gu in the model matrix of 'Accession' 
+Adding additional levels of Gu in the model matrix of 'Accession2' 
+User response:  DMC
+Generating formula...
+Fit mixed GBLUP model... ~sommer::vsm(sommer::ism(Accession), Gu = A) + sommer::vsm(sommer::ism(Accession2), Gu = D)
+Adding additional levels of Gu in the model matrix of 'Accession' 
+Adding additional levels of Gu in the model matrix of 'Accession2' 
+Warning in value[[3L]](cond) :
+  Matrix is singular; adding small value to diagonal and retrying inversion.
+Warning in value[[3L]](cond) :
+  Matrix is singular; adding small value to diagonal and retrying inversion.
+Predict crosses...
+GP:
+Error in calcCrossMean(GP, ai, di, userPloidy) : 
+  object '_gpcp_calcCrossMean' not found
+Calls: runGPCP -> calcCrossMean
+Execution halted
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes ... WARNING
+Directory 'inst/doc' does not exist.
+Package vignette without corresponding single PDF/HTML:
+  ‘gpcp-introduction.Rmd’
+* checking re-building of vignette outputs ... OK
+* checking PDF version of manual ... WARNING
+LaTeX errors when creating PDF version.
+This typically indicates Rd problems.
+LaTeX errors found:
+* checking PDF version of manual without index ... ERROR
+* checking HTML version of manual ... NOTE
+Skipping checking HTML validation: no command 'tidy' found.
+Please obtain a recent version of HTML Tidy by downloading a binary
+release or compiling the source code from <https://www.html-tidy.org/>.
+* checking for non-standard things in the check directory ... NOTE
+Found the following files/directories:
+  ‘gpcp-manual.tex’
+* checking for detritus in the temp directory ... OK
+* DONE
+Status: 2 ERRORs, 5 WARNINGs, 8 NOTEs

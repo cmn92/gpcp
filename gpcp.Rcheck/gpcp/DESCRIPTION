@@ -1,0 +1,25 @@
+Package: gpcp
+Type: Package
+Title: Genomic Prediction of Cross Performance
+Version: 0.1.1
+Author: Marlee Labroo [aut], Christine Nyaga [cre, aut], Lukas Mueller [aut]
+Authors@R: c(
+    person(given="Marlee", family="Labroo", role=c("aut")),
+    person(given="Christine", family="Nyaga", role=c("cre","aut"), email="cmn92@cornell.edu"),
+    person(given="Lukas", family="Mueller", role=c("aut")))
+Maintainer: Christine Nyaga <cmn92@cornell.edu>
+Description: The gpcp package provides tools to perform genomic prediction of cross performance in plant breeding using marker and phenotypic data. It implements mixed‐model methods to estimate mean F1 performance across many potential crosses.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+LinkingTo: Rcpp, RcppArmadillo
+Imports: Rcpp, dplyr, sommer (>= 4.0.2), AGHmatrix, Matrix,
+        VariantAnnotation, tools, magrittr, methods
+Suggests: knitr, rmarkdown, testthat (>= 3.0.0), snpStats, BiocManager
+RoxygenNote: 7.3.2
+VignetteBuilder: knitr
+Depends: R (>= 2.10)
+Config/testthat/edition: 3
+NeedsCompilation: yes
+Packaged: 2025-07-31 18:38:03 UTC; cmn92
+Built: R 4.5.1; x86_64-pc-linux-gnu; 2025-07-31 18:38:17 UTC; unix
