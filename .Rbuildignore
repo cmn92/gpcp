@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+<<<<<<< HEAD
 ^LICENSE$
 ^\\.RData$
 ^\\.Rhistory$
@@ -36,3 +37,7 @@
 
 
 ^cran-comments\.md$
+=======
+^.*\.git$
+
+>>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d

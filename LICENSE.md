@@ -1,13 +1,6 @@
-YEAR: 2024
-COPYRIGHT HOLDER: Christine Nyaga
-=======
-MIT License
+# MIT License
 
-<<<<<<< HEAD
 Copyright (c) 2024 Christine Nyaga
-=======
-Copyright (c) 2024 cmn92
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

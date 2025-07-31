@@ -1,0 +1,15 @@
+source("~/gpcp/R/gpcp.R")
+phenotypeFile = read.csv("~/Documents/GCPC_input_files/2020_TDr_PHENO (1).csv")
+genotypeFile = "~/Documents/GCPC_input_files/rotundata_genotypic_IITA_VCF_sequenced_clones_2020.vcf"
+genotypes ="Accession"
+traits = c("rAUDPC_YMV", "YIELD", "DMC")
+weights=c(0.2,3,1)
+userFixed= c("REP")
+Ploidy=2
+NCrosses =150
+
+crossplan=runGPCP(phenotypeFile=phenotypeFile, genotypeFile=genotypeFile,genotypes=genotypes,
+        traits=traits, weights=weights, userFixed=userFixed,
+        Ploidy=Ploidy,NCrosses=NCrosses)
+
+# summarystasticts = summarystas(crossplan)
