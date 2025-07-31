@@ -16,7 +16,7 @@
 # 9. Predict the crosses.
 # 10. Format the information needed for output.
 
-<<<<<<< HEAD
+
 # Declare global variables to avoid R CMD check NOTE
 utils::globalVariables(c("P1Sex", "P2Sex"))
 
@@ -38,9 +38,6 @@ utils::globalVariables(c("P1Sex", "P2Sex"))
 #' @export
 #' @useDynLib gpcp, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
-=======
-#' @export
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
 #' @importFrom tools file_ext
 #' @importFrom magrittr %>%
 #' @importFrom VariantAnnotation readVcf
@@ -48,7 +45,6 @@ utils::globalVariables(c("P1Sex", "P2Sex"))
 #' @importFrom methods as
 #' @importFrom stats as.formula filter na.omit sd
 #' @importFrom utils combn head read.delim
-<<<<<<< HEAD
 #' @examples
 #' \donttest{
 #' # Load phenotype data from CSV
@@ -100,16 +96,6 @@ runGPCP = function(phenotypeFile, genotypeFile=NA, genotypeData=NA, genotypes, t
   # if (!requireNamespace("snpStats", quietly = TRUE)) {
   #   stop("The 'snpStats' package is required but not installed. Please install it using BiocManager::install('snpStats').")
   # }
-=======
-runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
-                   weights = NA, userSexes = "", userFixed = NA, userRandom = NA, Ploidy = NA, NCrosses = NA) {
-
-  Rcpp::sourceCpp("~/gpcp/R/QuantGenResources/CalcCrossMeans.cpp") # this is called CalcCrossMean.cpp on Github
-
-  if (!requireNamespace("snpStats", quietly = TRUE)) {
-    stop("The 'snpStats' package is required but not installed. Please install it using BiocManager::install('snpStats').")
-  }
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
   ################################################################################
   # 2. Declare user-supplied variables
   ################################################################################
@@ -133,7 +119,6 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
 
   # userFixed <- c()
   # userFixed <- c("studyYear") # for testing only
-<<<<<<< HEAD
   # — VECTOR‐SAFE parsing of userFixed —
   if (length(userFixed) == 1L && !is.na(userFixed) && nzchar(userFixed)) {
        # a single comma‐sep string: split it
@@ -145,10 +130,6 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
         # no userFixed besides the obligatory f
         userFixed <- character(0)
   }
-=======
-  userFixed <- unlist(strsplit(userFixed, split = ",", fixed = T))
-
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
 
   # d. The user should be able to select their random variables from a menu
   #    of the column names of the userPheno object. The possible interaction terms
@@ -179,11 +160,7 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
   #    provided.
 
   userPloidy <- Ploidy
-<<<<<<< HEAD
   #userPloidy <- 2 # for testing only
-=======
-  userPloidy <- 2 # for testing only
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
 
   # if(userPloidy %in% c(2, 4, 6) != TRUE){
   #   stop("Only ploidies of 2, 4, and 6 are supported currently. \n
@@ -249,7 +226,6 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
   #    I can put an error message into this script if a user tries to input
   #    monomorphic or biallelic sites which could be communicated through the GUI.
   #    It's also possible to filter them here.
-<<<<<<< HEAD
   if (!(length(genotypeFile) == 1L && is.na(genotypeFile))) {
     if (file_ext(genotypeFile) == "vcf") {
       message("READING VARIANT FILE ")
@@ -284,48 +260,13 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
   # message("G Matrix start --------")
   # message(G[1:5, 1:5])
   # message("G Matrix end =========")
-=======
 
-  if (file_ext(genotypeFile) == "vcf") {
-    print("READING VARIANT FILE ")
-    #  Import VCF with VariantAnnotation package and extract matrix of dosages
-    myVCF <- VariantAnnotation::readVcf(genotypeFile)
-    # G <- t(geno(myVCF)$DS) # Individual in row, genotype in column
-    mat <- VariantAnnotation::genotypeToSnpMatrix(myVCF)
-    # G <- t(geno(myVCF)$DS) # Individual in row, genotype in column
-    G <- methods::as(mat$genotypes, "numeric")
-    G <- G[, colSums(is.na(G)) < nrow(G)]
-
-    #   TEST temporarily import the genotypes via HapMap:
-    # source("R/hapMap2numeric.R") # replace and delete
-    # G <- hapMap2numeric(genotypeFile) # replace and delete
-  } else {
-    # accession_names     abc      abc2    abc3
-    # marker1                   0      0        2
-    # marker2                   1      0        0
-    # marker3                   0      0        0
-
-    print("READING DOSAGE FILE ")
-    GF <- utils::read.delim(genotypeFile)
-    GD <- GF[, -1]
-    GM <- as.matrix(GD)
-    G <- t(GM)
-  }
-
-  # print("G Matrix start --------")
-  # print(G[1:5, 1:5])
-  # print("G Matrix end =========")
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
 
   ################################################################################
   # 4. Get the genetic predictors needed.
   ################################################################################
 
-<<<<<<< HEAD
   message("GENETIC PREDICTIONS...")
-=======
-  print("GENETIC PREDICTIONS...")
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
   # 4a. Get the inbreeding coefficent, f, as described by Xiang et al., 2016
   # The following constructs f as the average heterozygosity of the individual
   # The coefficient of f estimated later then needs to be divided by the number of markers
@@ -344,11 +285,8 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
   # f <- rowSums(D, na.rm = TRUE)
 
 
-<<<<<<< HEAD
+
   message("DISTANCE MATRIX...")
-=======
-  print("DISTANCE MATRIX...")
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
   # 4b. Get the additive and dominance relationship matrices following Batista et al., 2021
   # https://doi.org/10.1007/s00122-021-03994-w
 
@@ -372,10 +310,8 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
   # Dominance or digenic dominance
   if (userPloidy == 2) {
     D <- AGHmatrix::Gmatrix(G, method = "Su", ploidy = userPloidy, missingValue = NA)
-<<<<<<< HEAD
+
     D <- Matrix::Matrix(D, sparse = FALSE)
-=======
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
   }
 
   if (userPloidy > 2) {
@@ -397,16 +333,14 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
     Dnum <- crossprod(Q)
     denomDom <- sum(C_matrix[, 1] * allele_freq^2 * (1 - allele_freq)^2)
     D <- Dnum / denomDom
-<<<<<<< HEAD
+
     D <- Matrix::Matrix(D, sparse = FALSE)
   }
   A <- Matrix::Matrix(A, sparse = FALSE)
   epsilon <- 1e-8
   A <- A + Matrix::Diagonal(nrow(A)) * epsilon
   D <- D + Matrix::Diagonal(nrow(D)) * epsilon
-=======
-  }
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
+
 
 
   ################################################################################
@@ -416,11 +350,7 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
   # write(summary(userPheno), stderr())
 
   # a. Paste f into the phenotype dataframe
-<<<<<<< HEAD
   message("processing phenotypic data...")
-=======
-  print("processing phenotypic data...")
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
   userPheno$f <- f[as.character(userPheno[, userID])]
 
 
@@ -443,21 +373,15 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
   # 6. Fit the mixed models in sommer.
   ################################################################################
 
-<<<<<<< HEAD
   message("Fitting mixed model in sommer")
-=======
-  print("Fitting mixed model in sommer")
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
+
   # 6a. Make a list to save the models.
 
   userModels <- list()
 
   for (i in 1:length(userResponse)) {
-<<<<<<< HEAD
+
     message(paste("User response: ", userResponse[i]))
-=======
-    print(paste("User response: ", userResponse[i]))
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
     # check if fixed effects besides f are requested, then paste together
     # response variable and fixed effects
     if (!is.na(userFixed[1])) {
@@ -473,40 +397,28 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
     # check if random effects besides genotypic additive and dominance effects
     # are requested, then paste together the formula
 
-<<<<<<< HEAD
+
     message("Generating formula...")
-=======
-    print("Generating formula...")
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
 
     if (!is.na(userRandom[1])) {
       randEff <- paste(userRandom, collapse = " + ")
       ID2 <- paste(userID, 2, sep = "")
-<<<<<<< HEAD
       randEff2 <- paste("~sommer::vsm(sommer::ism(", userID, "), Gu = A) + sommer::vsm(sommer::ism(", ID2, "), Gu = D)", sep = "")
-=======
-      randEff2 <- paste("~sommer::vsr(", userID, ", Gu = A) + sommer::vsr(", ID2, ", Gu = D)", sep = "")
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
+
       randArg <- paste(randEff2, randEff, sep = " + ")
     }
     if (is.na(userRandom[1])) {
       ID2 <- paste(userID, 2, sep = "")
-<<<<<<< HEAD
+
       randArg <- paste("~sommer::vsm(sommer::ism(", userID, "), Gu = A) + sommer::vsm(sommer::ism(", ID2, "), Gu = D)", sep = "")
     }
 
     message(paste("Fit mixed GBLUP model...", randArg))
-=======
-      randArg <- paste("~sommer::vsr(", userID, ", Gu = A) + sommer::vsr(", ID2, ", Gu = D)", sep = "")
-    }
-
-    print(paste("Fit mixed GBLUP model...", randArg))
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
 
     #  write(paste("USER PHENO:", userPheno), stderr())
     #  write(paste("COLNAMES: ", colnames(userPheno)), stderr())
     # fit the mixed GBLUP model
-<<<<<<< HEAD
+
     myMod <- tryCatch(
       sommer::mmes(
         fixed    = stats::as.formula(fixedArg),
@@ -532,19 +444,6 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
     )
 
 
-
-=======
-    myMod <- sommer::mmer(
-      fixed = stats::as.formula(fixedArg),
-      random = stats::as.formula(randArg),
-      rcov = ~units,
-      nIters = 3,
-      getPEV = FALSE,
-      data = userPheno
-    )
-
-
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
     # save the fit model
 
 
@@ -573,11 +472,7 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
     warning("Matrix is singular; adding small value to diagonal and retrying inversion.")
     A.T.reg <- A.T + diag(epsilon, nrow(A.T))
     solve(A.T.reg)  # Solve the regularized matrix
-<<<<<<< HEAD
   })
-=======
-  })                                    
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
   A.TTinv <- t(A.G) %*% A.Tinv # M'%*% (M'M)-
 
   D.T <- D.G %*% t(D.G) ## dominance genotype matrix
@@ -589,11 +484,8 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
     warning("Matrix is singular; adding small value to diagonal and retrying inversion.")
     D.T.reg <- D.T + diag(epsilon, nrow(D.T))
     solve(D.T.reg)  # Solve the regularized matrix
-<<<<<<< HEAD
+
   })
-=======
-  })                                        
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
   D.TTinv <- t(D.G) %*% D.Tinv # M'%*% (M'M)-
 
 
@@ -606,7 +498,6 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
     myMod <- userModels[[i]]
 
     # get the additive and dominance effects out of the sommer list
-<<<<<<< HEAD
     subMod <- myMod[["uList"]]
     subModA <- subMod[[1]]
     #subModA <- subModA[[1]]
@@ -623,21 +514,6 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
     # add f coefficient back into the dominance effects
     subModf <- myMod$b
     fCoef <- subModf[2]  # raw f coefficient
-=======
-    subMod <- myMod$U
-    subModA <- subMod[[1]]
-    subModA <- subModA[[1]]
-    subModD <- subMod[[2]]
-    subModD <- subModD[[1]]
-
-    # backsolve
-    addEff <- A.TTinv %*% matrix(subModA[colnames(A.TTinv)], ncol = 1) # these must be reordered to match A.TTinv
-    domEff <- D.TTinv %*% matrix(subModD[colnames(D.TTinv)], ncol = 1) # these must be reordered to match D.TTinv
-
-    # add f coefficient back into the dominance effects
-    subModf <- myMod$Beta
-    fCoef <- subModf[subModf$Effect == "f", "Estimate"] # raw f coefficient
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
     fCoefScal <- fCoef / ncol(G) # divides f coefficient by number of markers
     dirDomEff <- domEff + fCoefScal
 
@@ -654,10 +530,6 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
   ################################################################################
   # 8. Weight the marker effects and add them together to form an index of merit.
   ################################################################################
-<<<<<<< HEAD
-=======
-
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
   ai <- 0
   di <- 0
   for (i in 1:length(userWeights)) {
@@ -680,21 +552,12 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
   # for use in calcCrossMean(). calcCrossMean will return predicted cross
   # values for all individuals in the genotype file otherwise.
 
-<<<<<<< HEAD
   message("Predict crosses...")
 
   GP <- G[rownames(G) %in% userPheno[, userID], ]
 
   message("GP:")
   # message(head(GP))
-=======
-  print("Predict crosses...")
-
-  GP <- G[rownames(G) %in% userPheno[, userID], ]
-
-  print("GP:")
-  print(head(GP))
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
 
   crossPlan <- calcCrossMean(
     GP,
@@ -704,11 +567,8 @@ runGPCP = function(phenotypeFile, genotypeFile, genotypes, traits,
   )
 
 
-<<<<<<< HEAD
+
   message("Done with calcCrossMean!!!!!!")
-=======
-  print("Done with calcCrossMean!!!!!!")
->>>>>>> 1d834e19d37a696876231382b97adf2e1fdd000d
 
 
   ################################################################################
