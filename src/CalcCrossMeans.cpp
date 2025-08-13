@@ -2,7 +2,7 @@
 #include <RcppArmadillo.h>
 
 /*
- * Calculate cross means (and segregation variance) for different ploidy levels 
+ * Calculate cross means (and segregation variance) for different ploidy levels
  * Output columns:
  *  1: parent i (1-based), 2: parent j (1-based), 3: mean, 4: within-cross variance
  */
