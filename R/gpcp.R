@@ -590,7 +590,7 @@ runGPCP = function(phenotypeFile, genotypeFile=NA, genotypeData=NA, genotypes, t
     crossPlan <- crossPlan[order(crossPlan[, 3], decreasing = TRUE), ] # orders the plan by predicted merit
     crossPlan[, 1] <- rownames(GP)[crossPlan[, 1]] # replaces internal ID with genotye file ID
     crossPlan[, 2] <- rownames(GP)[crossPlan[, 2]] # replaces internal ID with genotye file ID
-    colnames(crossPlan) <- c("Parent1", "Parent2", "CrossPredictedMerit")
+    colnames(crossPlan) <- c("Parent1", "Parent2", "CrossPredictedMerit", "varCrossPredictedMerit")
 
     # Look up the parent sexes and subset
     crossPlan$P1Sex <- userPheno[match(crossPlan$Parent1, userPheno$germplasmName), userSexes] # get sexes ordered by Parent1
