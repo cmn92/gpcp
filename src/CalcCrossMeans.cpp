@@ -9,7 +9,7 @@
 #include <RcppArmadillo.h>
 
 /*
- * Calculate cross means for different ploidy levels 
+ * Calculate cross means (and segregation variance) for different ploidy levels 
  * Input: 
  *  geno, genotypes (0,1,..,ploidy) 
  *        rows for indiviuals 
@@ -21,6 +21,7 @@
  *  A matrix for all half-diallel crosses 
  *    Columns 1 and 2 are the parents of the cross 
  *    Column 3 is the expected mean of the cross 
+ *    Column 4 is the expected within-cross segregation variance
  */
 // [[Rcpp::export]]
 arma::mat calcCrossMean(arma::mat& geno,
@@ -32,7 +33,7 @@ arma::mat calcCrossMean(arma::mat& geno,
   arma::uword nInd = geno.n_rows;
   arma::uword nSnp = geno.n_cols;
   arma::uword nCrosses = nInd * (nInd-1) / 2;
-  arma::mat output(nCrosses, 3, arma::fill::zeros);
+  arma::mat output(nCrosses, 4, arma::fill::zeros); // +1 column for variance
   
   // Convert genotype data to a more convient type and layout
   arma::umat genoT = arma::conv_to<arma::umat>::from(geno.t());
@@ -42,7 +43,7 @@ arma::mat calcCrossMean(arma::mat& geno,
   arma::vec x = arma::regspace(0, ploidy); // Raw genotype
   x /= double(ploidy); // Proportional genotype
   arma::vec xa = 2.0*x - 1.0; // Additive effect
-  arma::vec xd = -4.0*(x%x) + 4.0*x; // Digenic dominance effect
+  arma::vec xd = -4.0%(x%x) + 4.0*x; // Digenic dominance effect
   
   // Calculate gamete probabilities
   // Probabilities determined by considering all possible combinations
@@ -90,9 +91,13 @@ arma::mat calcCrossMean(arma::mat& geno,
   // Map parental genotypes to mean additive and dominance effects of progeny
   arma::mat mapA(ploidy+1, ploidy+1, arma::fill::zeros);
   arma::mat mapD(ploidy+1, ploidy+1, arma::fill::zeros);
+  // Additional maps for second moments
+  arma::mat mapA2(ploidy+1, ploidy+1, arma::fill::zeros);
+  arma::mat mapD2(ploidy+1, ploidy+1, arma::fill::zeros);
+  arma::mat mapAD(ploidy+1, ploidy+1, arma::fill::zeros);
   
   // Loop over parental genotypes to
-  // compute means for each pair
+  // compute means and second moments for each pair
   for(arma::uword i=0; i<=ploidy; i++){
     for(arma::uword j=0; j<=ploidy; j++){
       
@@ -102,17 +107,24 @@ arma::mat calcCrossMean(arma::mat& geno,
       // Loop over gamete pairs
       for(arma::uword k=0; k<=(ploidy/2); k++){
         for(arma::uword l=0; l<=(ploidy/2); l++){
+          arma::uword g = k + l;
+          double w = F(k,l);
+          double xa_g = xa(g);
+          double xd_g = xd(g);
           
-          // Multiply frequency by effect
-          mapA(i,j) += F(k,l) * xa(k+l);
-          mapD(i,j) += F(k,l) * xd(k+l);
+          // Multiply frequency by effects for moments
+          mapA(i,j)  += w * xa_g;
+          mapD(i,j)  += w * xd_g;
+          mapA2(i,j) += w * xa_g * xa_g;
+          mapD2(i,j) += w * xd_g * xd_g;
+          mapAD(i,j) += w * xa_g * xd_g;
         }
       }
       
     }
   }
   
-  // Calculate cross means for partial diallel
+  // Calculate cross means and segregation variances for partial diallel
   arma::uword k=0; // Cross identifier
   for(arma::uword i=0; i<(nInd-1); i++){
     for(arma::uword j=i+1; j<nInd; j++){
@@ -122,11 +134,36 @@ arma::mat calcCrossMean(arma::mat& geno,
       output(k,1) = j;
       
       // Sum effects for all loci
+      double mean_sum = 0.0;
+      double var_sum  = 0.0;
+      
       for(arma::uword m=0; m<nSnp; m++){
-        output(k,2) +=
-          mapA(genoT(m,i), genoT(m,j)) * a(m) +
-          mapD(genoT(m,i), genoT(m,j)) * d(m);
+        arma::uword gi = genoT(m,i);
+        arma::uword gj = genoT(m,j);
+        
+        double EA   = mapA(gi, gj);
+        double ED   = mapD(gi, gj);
+        double EA2  = mapA2(gi, gj);
+        double ED2  = mapD2(gi, gj);
+        double EAD  = mapAD(gi, gj);
+        double am   = a(m);
+        double dm   = d(m);
+        
+        // Per-locus mean
+        double mu_m = EA * am + ED * dm;
+        mean_sum += mu_m;
+        
+        // Per-locus second moment E[T^2]
+        double ET2_m = (am*am)*EA2 + (dm*dm)*ED2 + 2.0*am*dm*EAD;
+        
+        // Per-locus variance Var(T) = E[T^2] - (E[T])^2
+        double var_m = ET2_m - mu_m*mu_m;
+        var_sum += var_m;
       }
+      
+      // Store mean and variance
+      output(k,2) = mean_sum;
+      output(k,3) = var_sum;
       
       k++;
     }
@@ -138,4 +175,3 @@ arma::mat calcCrossMean(arma::mat& geno,
   
   return output;
 }
-
